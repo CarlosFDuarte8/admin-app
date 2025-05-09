@@ -6,6 +6,7 @@ import DeviceFormScreen from '../screens/DeviceFormScreen';
 import { useTheme } from '../theme/ThemeContext';
 import BottomTabNavigator from './bottom.route';
 import RegisterUserScreen from '../screens/RegisterUserScreen';
+import { NavigationProp } from '@react-navigation/native';
 
 export type AppStackParamList = {
     BottomTabNavigator: undefined;
@@ -14,6 +15,8 @@ export type AppStackParamList = {
   DeviceForm: undefined;
   Register: undefined;
 };
+
+export type NavigationAppProps = NavigationProp<AppStackParamList>;
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -52,6 +55,11 @@ export const AppRoutes: React.FC = () => {
       <Stack.Screen
         name="DeviceForm"
         component={DeviceFormScreen}
+        options={{ title: 'Cadastro de Dispositivo' }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
         options={{ title: 'Cadastro de Dispositivo' }}
       />
     </Stack.Navigator>

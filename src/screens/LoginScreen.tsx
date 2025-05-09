@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Title, Text } from 'react-native-paper';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthContext';
 
 interface LoginScreenProps {
   navigation: any;
@@ -10,19 +10,22 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [login, setLogin] = useState('carlos.duarte@inv.net.br');
   const [senha, setSenha] = useState('Abcd@123');
-  const { isLoading, error, isAuthenticated, login: doLogin } = useAuth();
+  const { isLoading, isAuthenticated, user, login: doLogin } = useAuthContext();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (error) {
-      Alert.alert('Erro', error);
+    if (loginError) {
+      Alert.alert('Erro de Login', loginError);
     }
-  }, [error]);
+  }, [loginError]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-    //   navigation.navigate('Home');
+    // Quando o usuário estiver autenticado, navegar para a tela principal
+    if (isAuthenticated && user) {
+      console.log("Usuário autenticado, navegando para Home");
+      navigation.navigate('Home');
     }
-  }, [isAuthenticated, navigation]);
+  }, [isAuthenticated, user, navigation]);
 
   const handleLogin = async () => {
     if (!login || !senha) {
@@ -30,10 +33,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       return;
     }
 
+    setLoginError(null);
     try {
+      console.log(`Tentando login com: ${login}`);
       await doLogin({ login, senha });
+      // O redirecionamento será feito pelo useEffect quando isAuthenticated mudar
     } catch (err) {
-      // Erro já é tratado no hook useAuth
+      console.error("Erro ao realizar login:", err);
+      setLoginError(err instanceof Error ? err.message : "Falha ao realizar login");
     }
   };
 

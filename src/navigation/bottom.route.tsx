@@ -1,8 +1,8 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import ProfileScreen from "../screens/ProfileScreens";
 import { useTheme } from "../theme/ThemeContext";
 const Tab = createBottomTabNavigator();
 
@@ -38,11 +38,11 @@ const BottomTabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={SettingsScreen}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons
-              name={focused ? 'settings' :'settings-outline'}
+              name={focused ? "settings" : "settings-outline"}
               size={size}
               color={color}
             />

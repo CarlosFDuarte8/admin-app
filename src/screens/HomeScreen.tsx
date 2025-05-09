@@ -1,79 +1,32 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
-import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../theme/ThemeContext';
+import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import { Button, Card, Text } from "react-native-paper";
 
 interface HomeScreenProps {
   navigation: any;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { logout, user } = useAuth();
-  const { isDarkTheme, theme } = useTheme();
-
-  const handleLogout = () => {
-    logout();
-    navigation.navigate('Login');
-  };
-
   const handleRegisterUser = () => {
-    navigation.navigate('Register');
-  };
-
-  const handleNavigateToSettings = () => {
-    navigation.navigate('Settings');
+    navigation.navigate("Register");
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Title style={[styles.title, { color: theme.colors.text }]}>Bem-vindo!</Title>
-      
+    <ScrollView style={[styles.container]}>
+      <Text style={[styles.title]}>Bem-vindo!</Text>
+
       <Card style={styles.card}>
         <Card.Content>
-          <Title>Cadastro de Usuários</Title>
-          <Paragraph>
-            Acesse a área de cadastro de usuários para adicionar novos usuários ao sistema.
-          </Paragraph>
+          <Text variant="titleLarge">Cadastro de Usuários</Text>
+          <Text variant="bodyMedium">
+            Acesse a área de cadastro de usuários para adicionar novos usuários
+            ao sistema.
+          </Text>
         </Card.Content>
         <Card.Actions>
           <Button onPress={handleRegisterUser}>Cadastrar Usuário</Button>
         </Card.Actions>
       </Card>
-
-      <Card style={styles.card}>
-        <Card.Content>
-          <Title>Sua Conta</Title>
-          <Paragraph>
-            Gerencie suas informações e preferências de conta.
-          </Paragraph>
-        </Card.Content>
-        <Card.Actions>
-          <Button>Meu Perfil</Button>
-        </Card.Actions>
-      </Card>
-      
-      <Card style={styles.card}>
-        <Card.Content>
-          <Title>Configurações</Title>
-          <Paragraph>
-            Ajuste as configurações do aplicativo, incluindo o tema (claro, escuro ou do sistema).
-          </Paragraph>
-        </Card.Content>
-        <Card.Actions>
-          <Button onPress={handleNavigateToSettings}>Configurações</Button>
-        </Card.Actions>
-      </Card>
-      
-      <View style={styles.logoutContainer}>
-        <Button 
-          mode="outlined" 
-          onPress={handleLogout} 
-          style={styles.logoutButton}
-        >
-          Sair
-        </Button>
-      </View>
     </ScrollView>
   );
 };
@@ -86,7 +39,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginVertical: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   card: {
     marginBottom: 16,
@@ -96,8 +49,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoutButton: {
-    borderColor: '#ff5252',
-  }
+    borderColor: "#ff5252",
+  },
 });
 
 export default HomeScreen;
