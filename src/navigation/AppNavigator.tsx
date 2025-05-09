@@ -1,51 +1,34 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import LoginScreen from '../screens/LoginScreen';
-import RegisterUserScreen from '../screens/RegisterUserScreen';
-import HomeScreen from '../screens/HomeScreen';
-
-export type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  Home: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar, ActivityIndicator, View } from "react-native";
+import { useTheme } from "../theme/ThemeContext";
+import { AuthRoutes } from "./auth.route";
+import { AppRoutes } from "./app.route";
+import { useAuthContext } from "../context/AuthContext";
 
 export const AppNavigator = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#2563eb',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+  const { theme } = useTheme();
+  const { isAuthenticated, isLoading } = useAuthContext();
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: theme.colors.background,
         }}
       >
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen} 
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="Register" 
-          component={RegisterUserScreen} 
-          options={{ title: 'Cadastro de Usuário' }}
-        />
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen} 
-          options={{ title: 'Página Inicial' }}
-        />
-      </Stack.Navigator>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer theme={theme}>
+      <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
+      {isAuthenticated ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
 };

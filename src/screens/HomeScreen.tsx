@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../theme/ThemeContext';
 
 interface HomeScreenProps {
   navigation: any;
@@ -9,6 +10,7 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { logout, user } = useAuth();
+  const { isDarkTheme, theme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -19,9 +21,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     navigation.navigate('Register');
   };
 
+  const handleNavigateToSettings = () => {
+    navigation.navigate('Settings');
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <Title style={styles.title}>Bem-vindo!</Title>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Title style={[styles.title, { color: theme.colors.text }]}>Bem-vindo!</Title>
       
       <Card style={styles.card}>
         <Card.Content>
@@ -44,6 +50,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </Card.Content>
         <Card.Actions>
           <Button>Meu Perfil</Button>
+        </Card.Actions>
+      </Card>
+      
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title>Configurações</Title>
+          <Paragraph>
+            Ajuste as configurações do aplicativo, incluindo o tema (claro, escuro ou do sistema).
+          </Paragraph>
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={handleNavigateToSettings}>Configurações</Button>
         </Card.Actions>
       </Card>
       

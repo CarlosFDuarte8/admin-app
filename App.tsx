@@ -1,23 +1,30 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { Provider as PaperProvider, DarkTheme } from 'react-native-paper';
-import { AppNavigator } from './src/navigation/AppNavigator';
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import { Provider as PaperProvider } from "react-native-paper";
+import { AppNavigator } from "./src/navigation/AppNavigator";
+import { ThemeProvider, useTheme } from "./src/theme/ThemeContext";
+import { AuthProvider } from "./src/context/AuthContext";
 
-export default function App() {
-  const darkTheme = {
-    ...DarkTheme, 
-    colors: {
-      ...DarkTheme.colors,
-      primary: '#2563eb'
-    }
-  };
+// Componente interno que usa o hook useTheme
+const ThemedApp = () => {
+  const { theme } = useTheme();
 
   return (
-    <PaperProvider theme={darkTheme}>
+    <PaperProvider theme={theme}>
       <SafeAreaView style={styles.container}>
-        <AppNavigator />
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
       </SafeAreaView>
     </PaperProvider>
+  );
+};
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <ThemedApp />
+    </ThemeProvider>
   );
 }
 

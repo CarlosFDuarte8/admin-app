@@ -8,8 +8,8 @@ interface LoginScreenProps {
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const [login, setLogin] = useState('');
-  const [senha, setSenha] = useState('');
+  const [login, setLogin] = useState('carlos.duarte@inv.net.br');
+  const [senha, setSenha] = useState('Abcd@123');
   const { isLoading, error, isAuthenticated, login: doLogin } = useAuth();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigation.navigate('Home');
+    //   navigation.navigate('Home');
     }
   }, [isAuthenticated, navigation]);
 
@@ -46,6 +46,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         value={login}
         onChangeText={setLogin}
         style={styles.input}
+        keyboardType='email-address'
+        autoCapitalize='none'
+        textContentType='emailAddress'
         mode="outlined"
       />
       
