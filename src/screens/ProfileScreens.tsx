@@ -1,142 +1,207 @@
-import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import {
   Text,
   Avatar,
-  Card,
-  Button,
-  Menu,
   Divider,
   IconButton,
+  useTheme as usePaperTheme,
+  List,
 } from "react-native-paper";
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationAppProps } from "../navigation/app.route";
+import { useTheme } from "../theme/ThemeContext";
 
 const ProfileScreen = () => {
   const { user, logout, refreshUserData } = useAuthContext();
   const navigation = useNavigation<NavigationAppProps>();
-  const [menuVisible, setMenuVisible] = useState(false);
+  const { theme, isDarkTheme } = useTheme();
+  const paperTheme = usePaperTheme();
+  
+  // Estado para guardar os valores formatados das propriedades do usuário
+  const [formattedUserInfo, setFormattedUserInfo] = useState({
+    nome: '',
+    email: '',
+    login: '',
+    profile: 'USER',
+    userType: '',
+    mobilePhone: '',
+  });
 
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
+  // Processa os dados do usuário para garantir que tudo que é renderizado seja do tipo primitivo
+  useEffect(() => {
+    if (user) {
+      console.log('Processando dados do usuário:', user);
+      setFormattedUserInfo({
+        nome: typeof user.nome === 'string' ? user.nome : 'Usuário',
+        email: typeof user.email === 'string' ? user.email : '',
+        login: typeof user.login === 'string' ? user.login : '',
+        profile: typeof user.profile === 'string' ? user.profile : 'USER',
+        userType: typeof user.userType === 'string' ? user.userType : 
+                 (user.userType && typeof user.userType === 'object' ? 
+                  (user.userType.nome || 'Desconhecido') : ''),
+        mobilePhone: typeof user.mobilePhone === 'string' ? user.mobilePhone : '',
+      });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
-    closeMenu();
-    // Pequeno atraso para o menu fechar antes do logout
-    setTimeout(() => {
-      logout();
-    }, 300);
+    logout();
   };
 
   const handleSettings = () => {
-    closeMenu();
     navigation.navigate("Settings");
   };
 
+  const navigateToAccountDetails = () => {
+    navigation.navigate("AccountDetails");
+  };
+
   return (
-    <SafeAreaView style={styles.container} >
-      <View style={styles.header}>
-        <Text variant="headlineMedium">Perfil</Text>
-        <Menu
-          visible={menuVisible}
-          onDismiss={closeMenu}
-          anchor={<IconButton icon="dots-vertical" onPress={openMenu} />}
-        >
-          <Menu.Item
-            leadingIcon="cog"
-            onPress={handleSettings}
-            title="Configurações"
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={styles.scrollContent}
+    >
+      {/* Cabeçalho com informações do perfil - agora clicável */}
+      <TouchableOpacity 
+        style={styles.headerContainer}
+        onPress={navigateToAccountDetails}
+        activeOpacity={0.7}
+      >
+        <View style={styles.profileHeader}>
+          <Avatar.Icon
+            size={80}
+            icon="account"
+            style={[styles.avatar, { backgroundColor: isDarkTheme ? '#666' : '#e0e0e0' }]}
+            color={isDarkTheme ? '#eee' : '#555'}
           />
-          <Divider />
-          <Menu.Item leadingIcon="logout" onPress={handleLogout} title="Sair" />
-        </Menu>
-      </View>
-
-      <Card style={styles.profileCard}>
-        <Card.Content style={styles.profileContent}>
-          <Avatar.Icon size={80} icon="account" style={styles.avatar} />
-          <View style={styles.userInfo}>
-            <Text variant="titleLarge">{user?.nome || "Usuário"}</Text>
-            <Text variant="bodyMedium">
-              {user?.email || user?.login || "Email não disponível"}
+          <View style={styles.profileInfo}>
+            <Text variant="titleLarge" style={styles.userName}>
+              {formattedUserInfo.nome}
             </Text>
-            {user?.telefone && (
-              <Text variant="bodyMedium">{user.telefone}</Text>
-            )}
+            <Text variant="bodyMedium" style={styles.userEmail}>
+              {formattedUserInfo.email || formattedUserInfo.login || "Email não disponível"}
+            </Text>
+            <View style={styles.viewProfileContainer}>
+              <Text variant="bodySmall" style={styles.viewProfileText}>
+                Ver detalhes do perfil
+              </Text>
+              <IconButton 
+                icon="chevron-right" 
+                size={16} 
+                style={styles.chevronIcon}
+              />
+            </View>
           </View>
-        </Card.Content>
-      </Card>
-
-      <View style={styles.actionsContainer}>
-        <Button
-          mode="contained"
-          icon="account-edit"
-          style={styles.actionButton}
-          onPress={() => {
-            /* Navegar para edição de perfil quando implementado */
-            refreshUserData();
-          }}
-        >
-          Editar Perfil
-        </Button>
-
-        <Button
-          mode="outlined"
-          icon="cog"
-          style={styles.actionButton}
-          onPress={handleSettings}
-        >
-          Configurações
-        </Button>
-
-        <Button
-          mode="outlined"
-          icon="logout"
-          style={[styles.actionButton, styles.logoutButton]}
-          onPress={handleLogout}
-        >
-          Sair
-        </Button>
+        </View>
+      </TouchableOpacity>
+      
+      <Divider style={styles.divider} />
+      
+      {/* Seção de opções estilo lista */}
+      <View style={styles.listSection}>
+        <List.Section>
+          <List.Subheader>Configurações</List.Subheader>
+          
+          <List.Item
+            title="Configurações"
+            left={props => <List.Icon {...props} icon="cog" color={theme.colors.primary} />}
+            onPress={handleSettings}
+            style={styles.listItem}
+          />
+          
+          <List.Item
+            title="Ajuda"
+            left={props => <List.Icon {...props} icon="help-circle" color={theme.colors.primary} />}
+            style={styles.listItem}
+          />
+        </List.Section>
+        
+        <Divider style={styles.divider} />
+        
+        <List.Section>
+          <List.Item
+            title="Sair"
+            titleStyle={{ color: '#FF3B30' }}
+            left={props => <List.Icon {...props} icon="logout" color="#FF3B30" />}
+            onPress={handleLogout}
+            style={styles.listItem}
+          />
+        </List.Section>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.footer}>
+        <Text style={styles.version}>Versão 1.0.0</Text>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
+  scrollContent: {
+    paddingBottom: 24,
   },
-  profileCard: {
-    marginBottom: 24,
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
   },
-  profileContent: {
+  profileHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
   },
   avatar: {
     marginRight: 16,
   },
-  userInfo: {
+  profileInfo: {
     flex: 1,
   },
-  actionsContainer: {
+  userName: {
+    fontWeight: "600",
+  },
+  userEmail: {
+    opacity: 0.7,
+  },
+  viewProfileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  viewProfileText: {
+    color: '#007AFF',
+    fontSize: 12,
+  },
+  chevronIcon: {
+    margin: 0,
+    padding: 0,
+    marginLeft: -8,
+  },
+  divider: {
+    height: 0.5,
+    marginVertical: 8,
+  },
+  listSection: {
     marginTop: 8,
   },
-  actionButton: {
-    marginBottom: 12,
+  listItem: {
+    paddingVertical: 8,
   },
-  logoutButton: {
-    marginTop: 12,
-    borderColor: "#ff5252",
+  footer: {
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 16,
+  },
+  version: {
+    fontSize: 12,
+    opacity: 0.5,
   },
 });
 

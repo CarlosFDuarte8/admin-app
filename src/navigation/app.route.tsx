@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import DeviceFormScreen from '../screens/DeviceFormScreen';
+import AccountDetailsScreen from '../screens/AccountDetailsScreen';
 import { useTheme } from '../theme/ThemeContext';
 import BottomTabNavigator from './bottom.route';
 import RegisterUserScreen from '../screens/RegisterUserScreen';
@@ -14,6 +15,7 @@ export type AppStackParamList = {
   Settings: undefined;
   DeviceForm: undefined;
   Register: undefined;
+  AccountDetails: undefined;
 };
 
 export type NavigationAppProps = NavigationProp<AppStackParamList>;
@@ -60,7 +62,15 @@ export const AppRoutes: React.FC = () => {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: 'Cadastro de Dispositivo' }}
+        options={{ title: 'Configurações' }}
+      />
+      <Stack.Screen
+        name="AccountDetails"
+        component={AccountDetailsScreen}
+        options={{ 
+          title: 'Detalhes da Conta',
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
   );
