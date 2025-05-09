@@ -89,6 +89,7 @@ export const useAuth = () => {
       // Fazer a requisição de login
       const response = await apiClient.post("/api/login", credentials);
       console.log("Resposta do login:", response.data);
+      
 
       if (!response.data || !response.data.token) {
         throw new Error("Token não recebido do servidor");
@@ -114,7 +115,9 @@ export const useAuth = () => {
 
       try {
         // Tentar obter mais informações do usuário via endpoint correto
+        console.log("Chamando getMe após login");
         const userData = await getMe();
+        console.debug("Dados do usuário obtidoss :", userData);
         user = { ...user, ...userData };
       } catch (meError) {
         // Se falhar, continuamos com os dados que já temos

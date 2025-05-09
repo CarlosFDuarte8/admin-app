@@ -3,7 +3,7 @@ import { ProfileType } from "./ProfileType";
 
 export type UserLoggedType = {
   // Informações básicas do usuário
-  id: number;
+  id?: number;
   nome: string;
   email: string;
   senha?: string;
@@ -20,7 +20,7 @@ export type UserLoggedType = {
   activationCode?: string;
   limitForActivation?: string;
   settingsPassword: string;
-  profile: ProfileType;
+  profile: ProfileType | string;
   address?: AddressType;
   grouper: boolean;
   grouperId: number;
@@ -28,8 +28,8 @@ export type UserLoggedType = {
   devicesLicense: number;
   consumptionControl: string;
   nextPaymentDate?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   deletedAt?: string;
   userType:
     | "test_development"

@@ -7,17 +7,18 @@ import AccountDetailsScreen from '../screens/AccountDetailsScreen';
 import { useTheme } from '../theme/ThemeContext';
 import BottomTabNavigator from './bottom.route';
 import RegisterUserScreen from '../screens/RegisterUserScreen';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 
 export type AppStackParamList = {
     BottomTabNavigator: undefined;
   Home: undefined;
   Settings: undefined;
   DeviceForm: undefined;
-  Register: undefined;
+  Register: {userId?: number};
   AccountDetails: undefined;
 };
 
+export type RouteScreenProps = RouteProp<AppStackParamList>;
 export type NavigationAppProps = NavigationProp<AppStackParamList>;
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -42,7 +43,7 @@ export const AppRoutes: React.FC = () => {
       <Stack.Screen
         name="BottomTabNavigator"
         component={BottomTabNavigator}
-        options={{ title: 'Página Inicial' }}
+        options={{ title: '', headerShown: false }}
       />
       <Stack.Screen
         name="Home"
