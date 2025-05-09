@@ -1,14 +1,18 @@
 import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
+import { NavigationAppProps } from "../navigation/app.route";
 
 interface HomeScreenProps {
-  navigation: any;
+  navigation: NavigationAppProps;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const handleRegisterUser = () => {
     navigation.navigate("Register");
+  };
+  const handleRegisterDevice = () => {
+    navigation.navigate("DeviceForm");
   };
 
   return (
@@ -25,6 +29,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </Card.Content>
         <Card.Actions>
           <Button onPress={handleRegisterUser}>Cadastrar Usuário</Button>
+        </Card.Actions>
+      </Card>
+      <Card style={styles.card}>
+        <Card.Content>
+          <Text variant="titleLarge">Cadastro de Devices</Text>
+          <Text variant="bodyMedium">
+            Acesse a área de cadastro de devices para adicionar novos
+            dispositivos ao sistema.
+          </Text>
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={handleRegisterDevice}>Cadastrar Device</Button>
         </Card.Actions>
       </Card>
     </ScrollView>
