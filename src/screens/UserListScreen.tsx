@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import {
@@ -37,6 +38,7 @@ interface UserListItem {
   mobilePhone?: string;
   createdAt: string;
   confirmedAt?: string;
+  nextPaymentDate?: string;
 }
 
 // Pagination and filter parameters
@@ -195,6 +197,52 @@ const UserListScreen = () => {
     return date.toLocaleDateString("pt-BR");
   };
 
+  // Verificar o status do pagamento
+  const getPaymentStatus = (nextPaymentDate?: string) => {
+    // Se não tiver data de pagamento, retorna status "não aplicável"
+    if (!nextPaymentDate || nextPaymentDate === "N/A") {
+      return {
+        status: "na",
+        label: "Não aplicável",
+        icon: "information",
+        color: theme.colors.secondary,
+      };
+    }
+
+    const today = new Date();
+    const paymentDate = new Date(nextPaymentDate);
+
+    // Calcula a diferença em dias
+    const diffTime = paymentDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      // Pagamento vencido
+      return {
+        status: "overdue",
+        label: "Vencido",
+        icon: "alert-circle",
+        color: "#f44336",
+      };
+    } else if (diffDays <= 7) {
+      // Vencendo em breve (próximos 7 dias)
+      return {
+        status: "soon",
+        label: "Vencendo em breve",
+        icon: "clock-alert",
+        color: "#FFC107",
+      };
+    } else {
+      // Em dia
+      return {
+        status: "ok",
+        label: "Em dia",
+        icon: "check-circle",
+        color: "#4CAF50",
+      };
+    }
+  };
+
   // Call fetchUsers when component mounts or when dependencies change
   useEffect(() => {
     if (isFocused && isAdmin && isAuthenticated) {
@@ -274,7 +322,7 @@ const UserListScreen = () => {
         />
         <Appbar.Action
           icon="plus"
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate("Register" as never)}
           color={theme.colors.primary}
         />
       </Appbar>
@@ -302,7 +350,7 @@ const UserListScreen = () => {
         </View>
 
         {/* Filter chips */}
-        <View style={styles.filterContainer}>
+        <ScrollView horizontal style={styles.filterContainer}>
           <Chip
             selected={params.OrderByDirection === "desc"}
             onPress={() =>
@@ -386,7 +434,7 @@ const UserListScreen = () => {
           >
             Inativos
           </Chip>
-        </View>
+        </ScrollView>
 
         {/* User list */}
         {loading && !refreshing ? (
@@ -453,17 +501,6 @@ const UserListScreen = () => {
                       </Text>
                     </Text>
                     <Text style={{ color: theme.colors.text }}>
-                      Telefone:{" "}
-                      <Text
-                        style={[
-                          styles.detailValue,
-                          { color: theme.colors.text },
-                        ]}
-                      >
-                        {item.mobilePhone || "N/A"}
-                      </Text>
-                    </Text>
-                    <Text style={{ color: theme.colors.text }}>
                       Criado em:{" "}
                       <Text
                         style={[
@@ -473,6 +510,25 @@ const UserListScreen = () => {
                       >
                         {formatDate(item.createdAt)}
                       </Text>
+                    </Text>
+                    <Text style={{ color: theme.colors.text, textAlignVertical: "center" }}>
+                      Próxima data de pagamento: {" "}
+                      <Text
+                        style={[
+                          styles.detailValue,
+                          { color: theme.colors.text },
+                        ]}
+                      >
+                        {formatDate(item.nextPaymentDate)}
+                      </Text>
+                      {/* Ícone de status mais discreto */}
+                      <IconButton
+                        icon={getPaymentStatus(item.nextPaymentDate).icon}
+                        size={16}
+                        iconColor={getPaymentStatus(item.nextPaymentDate).color}
+                        
+                        style={{ margin: 0, padding: 0, height: 16, width: 16 }}
+                      />
                     </Text>
                     <Text style={{ color: theme.colors.text }}>
                       Confirmado:{" "}
@@ -485,21 +541,6 @@ const UserListScreen = () => {
                         {item.confirmedAt ? "Sim" : "Não"}
                       </Text>
                     </Text>
-                    {item.grouper && (
-                      <Chip
-                        style={[
-                          styles.grouperChip,
-                          {
-                            backgroundColor: isDarkTheme
-                              ? "#1a3f5e"
-                              : "#e0f7fa",
-                          },
-                        ]}
-                        textStyle={{ color: theme.colors.text }}
-                      >
-                        Agrupador
-                      </Chip>
-                    )}
                   </View>
                 </Card.Content>
               </Card>
@@ -588,6 +629,8 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: "row",
     marginBottom: 16,
+    height: 36,
+    flexWrap: "wrap",
   },
   chip: {
     marginRight: 8,
