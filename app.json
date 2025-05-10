@@ -23,12 +23,19 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
       ]
     ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Este aplicativo usa a câmera para escanear códigos QR para obter o MAC Address."
+        "NSCameraUsageDescription": "Este aplicativo usa a câmera para escanear códigos QR para obter o MAC Address.",
+        "NSFaceIDUsageDescription": "Este aplicativo usa o Face ID para autenticação segura."
       }
     },
     "android": {
@@ -37,7 +44,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA"]
+      "permissions": ["CAMERA", "USE_BIOMETRIC", "USE_FINGERPRINT"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

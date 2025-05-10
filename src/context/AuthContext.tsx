@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../hooks/useAuth";
-import { CommonActions } from "@react-navigation/native";
+import { useLocalAuth } from "../hooks/useLocalAuth";
+import { Alert } from "react-native";
 
 interface AuthContextData {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: any | null;
   login: (credentials: { login: string; senha: string }) => Promise<any>;
-  logout: () => Promise<void>;
+  logout: (keepBiometricCredentials?: boolean) => Promise<void>;
   refreshUserData: () => Promise<any>;
 }
 
@@ -18,6 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const auth = useAuth();
+  const localAuth = useLocalAuth();
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
@@ -117,9 +119,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Função melhorada de logout para garantir limpeza total dos dados e tokens
-  const handleLogout = async () => {
+  // Função melhorada de logout para incluir opção de manter credenciais biométricas
+  const handleLogout = async (keepBiometricCredentials = false) => {
     console.log("Iniciando processo de logout...");
+
+    // Se o usuário deseja remover credenciais biométricas
+    if (!keepBiometricCredentials && localAuth.hasSavedCredentials()) {
+      try {
+        // Perguntar ao usuário antes de remover credenciais biométricas
+        Alert.alert(
+          "Credenciais Biométricas",
+          "Deseja remover suas credenciais biométricas salvas?",
+          [
+            {
+              text: "Manter",
+              onPress: () => console.log("Mantendo credenciais biométricas"),
+              style: "cancel",
+            },
+            {
+              text: "Remover",
+              onPress: async () => {
+                await localAuth.removeCredentials();
+                console.log("Credenciais biométricas removidas com sucesso");
+              },
+            },
+          ],
+          { cancelable: true }
+        );
+      } catch (error) {
+        console.error("Erro ao remover credenciais biométricas:", error);
+      }
+    }
 
     try {
       // Lista de todas as chaves relacionadas à autenticação que devem ser removidas
