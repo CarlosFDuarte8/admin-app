@@ -4,6 +4,7 @@ import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import DeviceFormScreen from '../screens/DeviceFormScreen';
 import AccountDetailsScreen from '../screens/AccountDetailsScreen';
+import CapsuleFormScreen from '../screens/CapsuleFormScreen';
 import { useTheme } from '../theme/ThemeContext';
 import BottomTabNavigator from './bottom.route';
 import RegisterUserScreen from '../screens/RegisterUserScreen';
@@ -16,6 +17,7 @@ export type AppStackParamList = {
   DeviceForm: undefined;
   Register: {userId?: number};
   AccountDetails: undefined;
+  CapsuleForm: undefined;
 };
 
 export type RouteScreenProps = RouteProp<AppStackParamList>;
@@ -59,6 +61,11 @@ export const AppRoutes: React.FC = () => {
         name="DeviceForm"
         component={DeviceFormScreen}
         options={{ title: 'Cadastro de Dispositivo' }}
+      />
+      <Stack.Screen
+        name="CapsuleForm"
+        component={CapsuleFormScreen}
+        options={{ title: 'Cadastro de Cápsulas' }}
       />
       <Stack.Screen
         name="Settings"

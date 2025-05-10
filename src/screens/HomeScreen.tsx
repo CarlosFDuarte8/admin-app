@@ -14,6 +14,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const handleRegisterDevice = () => {
     navigation.navigate("DeviceForm");
   };
+  const handleRegisterCapsule = () => {
+    navigation.navigate("CapsuleForm");
+  };
 
   return (
     <ScrollView style={[styles.container]}>
@@ -41,6 +44,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </Card.Content>
         <Card.Actions>
           <Button onPress={handleRegisterDevice}>Cadastrar Device</Button>
+        </Card.Actions>
+      </Card>
+      <Card style={styles.card}>
+        <Card.Content>
+          <Text variant="titleLarge">Cadastro de Capsulas</Text>
+          <Text variant="bodyMedium">
+            Acesse a área de cadastro de capsulas para adicionar novas capsulas ao
+            sistema.
+          </Text>
+        </Card.Content>
+        <Card.Actions>
+          <Button onPress={handleRegisterCapsule}>Cadastrar Capsulas</Button>
         </Card.Actions>
       </Card>
     </ScrollView>
